@@ -36,6 +36,7 @@ public class BdbNonPersistentEnvironmentCreator implements BdbEnvironmentCreator
 
   public BdbNonPersistentEnvironmentCreator() {
     configuration = new EnvironmentConfig(new Properties());
+    configuration.setConfigParam(EnvironmentConfig.FREE_DISK, "0");
     configuration.setTransactional(true);
     configuration.setAllowCreate(true);
     configuration.setSharedCache(true);

@@ -40,6 +40,7 @@ public class BdbPersistentEnvironmentCreator implements BdbEnvironmentCreator {
   public BdbPersistentEnvironmentCreator(@JsonProperty("databaseLocation") String databaseLocation) {
     this.databaseLocation = databaseLocation;
     configuration = new EnvironmentConfig(new Properties());
+    configuration.setConfigParam(EnvironmentConfig.FREE_DISK, "0");
     configuration.setTransactional(true);
     configuration.setDurability(Durability.COMMIT_NO_SYNC);
     configuration.setAllowCreate(true);
