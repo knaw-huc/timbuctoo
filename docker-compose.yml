@@ -6,6 +6,7 @@ services:
     build: ./fluentd
     volumes:
       - ./fluentd/conf:/fluentd/etc
+      - ./timbuctoo-log:/timbuctoo-log
     links:
       - "elasticsearch"
     ports:
@@ -13,7 +14,7 @@ services:
       - "24224:24224/udp"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.5
+    image: huygensing/elasticsearch:5.6.5
     ports:
       - "9201:9200"
 
@@ -35,7 +36,8 @@ services:
     ports:
       - 3006:80
   timbuctoo:
-    image: huygensing/timbuctoo
+    #image: huygensing/timbuctoo
+    build: ./
     command: sh -c "if ! [ -f /mapped-data/auth/users.json ]; then mkdir -p /mapped-data/auth; echo '[{\"@type\":\"user\",\"displayName\":\"givenNamesurname\",\"persistentId\":\"pid\",\"_id\":\"bc75a716-7965-49b5-bb93-68004ba0d900\"}]' > /mapped-data/auth/users.json; fi; if ! [ -f /mapped-data/auth/logins.json ]; then mkdir -p /mapped-data/auth; echo '[{\"@type\":\"login\",\"userPid\":\"pid\",\"password\":\"Cbjk8GMdx7HhQHgZkAR74FBo76eNWcb9q8R8WPMbup0=\",\"salt\":\"YTQzMjMzMjQtYWJmNC00YjYxLTk2ZDYtZDhkMDY1Nzc5MGJm\",\"userName\":\"user\",\"givenName\":\"givenName\",\"surName\":\"surname\",\"emailAddress\":\"email\",\"organization\":\"organization\"}]' > /mapped-data/auth/logins.json; fi; if ! [ -f /mapped-data/datasets/authorizations.json ]; then mkdir -p /mapped-data/datasets; echo '[{\"vreId\":\"indexer\",\"userId\":\"pid\",\"roles\":[\"USER\"]}]' > /mapped-data/datasets/authorizations.json; fi; /app/bin/timbuctoo server /app/example_config.yaml"
     environment:
       timbuctoo_elasticsearch_host: elasticsearch
@@ -46,6 +48,7 @@ services:
       timbuctoo_authPath: ${timbuctoo_authPath:-/mapped-data/auth}
     volumes:
       - ./timbuctoo-data/:/mapped-data
+      - ./timbuctoo-log/:/log
     ports:
       - 8080:80
       - 8081:81
