@@ -17,6 +17,7 @@ RUN echo -e '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi=
 
 WORKDIR /build/timbuctoo
 
+#COPY host:./ image:/build/timbuctoo
 COPY ./ContractDiff/pom.xml ./ContractDiff/pom.xml
 COPY ./HttpCommand/pom.xml ./HttpCommand/pom.xml
 COPY ./security-client-agnostic/pom.xml ./security-client-agnostic/pom.xml
@@ -29,10 +30,11 @@ COPY ./timbuctoo-instancev4/src/main/resources/checkstyle_config.xml ./timbuctoo
 
 RUN mvn clean package dependency:go-offline
 
-RUN rm -r ./*
+#RUN rm -r ./*
 
-FROM buildbase-11
+FROM buildbase-11 AS build
 
+#COPY host:./ image:/build/timbuctoo
 COPY ./ContractDiff ./ContractDiff
 COPY ./HttpCommand ./HttpCommand
 COPY ./security-client-agnostic ./security-client-agnostic
@@ -54,8 +56,8 @@ RUN mkdir -p /root/data/dataSets && \
   echo "[]" > /root/data/auth/logins.json && \
   echo "[]" > /root/data/auth/users.json
 
-COPY --from=0 /build/timbuctoo/timbuctoo-instancev4/target/appassembler .
-COPY --from=0 /build/timbuctoo/timbuctoo-instancev4/example_config.yaml .
+COPY --from=build /build/timbuctoo/timbuctoo-instancev4/target/appassembler .
+COPY --from=build /build/timbuctoo/timbuctoo-instancev4/example_config.yaml .
 
 CMD ./bin/timbuctoo server, ./example_config.yaml | tee -a /log/timbuctoo.log
 
