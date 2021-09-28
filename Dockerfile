@@ -42,6 +42,7 @@ COPY ./timbuctoo-test-services ./timbuctoo-test-services
 COPY ./timbuctoo-instancev4/src ./timbuctoo-instancev4/src
 COPY ./timbuctoo-instancev4/pom.xml ./timbuctoo-instancev4/pom.xml
 COPY ./pom.xml ./pom.xml
+COPY ./start.sh ./start.sh
 
 COPY ./timbuctoo-instancev4/example_config.yaml ./timbuctoo-instancev4/example_config.yaml
 RUN mvn clean package
@@ -59,7 +60,7 @@ RUN mkdir -p /root/data/dataSets && \
 COPY --from=build /build/timbuctoo/timbuctoo-instancev4/target/appassembler .
 COPY --from=build /build/timbuctoo/timbuctoo-instancev4/example_config.yaml .
 
-CMD ./bin/timbuctoo server, ./example_config.yaml | tee -a /log/timbuctoo.log
+CMD ./start.sh
 
 EXPOSE 80 81
 ENV timbuctoo_port="80"
