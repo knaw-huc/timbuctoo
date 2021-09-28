@@ -1,1 +1,2 @@
-./bin/timbuctoo server, ./example_config.yaml | tee -a /log/timbuctoo.log
+echo "[`date`] Welcome to Timbuctoo :)" | tee /log/timbuctoo.log
+./bin/timbuctoo server ./example_config.yaml 2>&1 | tee -a /log/timbuctoo.log
